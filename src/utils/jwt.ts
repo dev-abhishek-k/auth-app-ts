@@ -25,4 +25,4 @@ import jwt from "jsonwebtoken";
      const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
      return {rawToken, hashedToken};
  }
- export { generateAccessToken, verifyAccessToken, generateRefreshToken, verifyRefreshToken };
+ export { generateAccessToken, verifyAccessToken, generateRefreshToken, verifyRefreshToken,generateResetToken };
