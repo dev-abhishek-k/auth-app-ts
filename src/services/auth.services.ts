@@ -10,7 +10,7 @@ const hashToken= (token:string)=>{
     return hash;
 }
 
-export const registerUser=async({name,email,password,role}:RegisterInput)=>{
+ const registerUser=async({name,email,password,role}:RegisterInput)=>{
  const extisingUser= await User.findOne({email});
  if(extisingUser){
     throw ApiError.conflict("User already exists");
@@ -30,4 +30,11 @@ const {rawToken,hashedToken}= generateResetToken();
         console.log("Faliled to send email",error.message);
     }
  }
+ const userObj=user.toObject();
+const {password:_,verificationdToken,...safeUser}=userObj
+  return safeUser
+}
+
+export {
+    registerUser
 }
