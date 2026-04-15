@@ -1,5 +1,5 @@
 import type { IApiError } from "../types/api-error.type.ts";
-import { HTTP_STATUS } from "../constants/http_status.js";
+import { HTTP_STATUS } from "../constants/http_status";
 export class ApiError extends Error implements IApiError {
   success: false;
   message: string;

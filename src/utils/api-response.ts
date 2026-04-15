@@ -1,6 +1,6 @@
 import type { IApiResponse } from "../types/api-response.type.ts";
 import type { Response } from "express"; 
-import { HTTP_STATUS } from "../constants/http_status.js";
+import { HTTP_STATUS } from "../constants/http_status";
 export class ApiResponse<T> implements IApiResponse<T> {
   success: boolean;
   message: string;
