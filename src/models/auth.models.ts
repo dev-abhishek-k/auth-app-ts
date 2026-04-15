@@ -1,6 +1,6 @@
 import mongoose,{Schema,Document} from "mongoose";
 import type { IUser } from "../types/user.type.ts";
-
+import bcrypt from "bcrypt";
 export interface IUserDocment extends IUser,Document{}
 
 const userSchema= new Schema<IUserDocment>({
@@ -43,4 +43,11 @@ const userSchema= new Schema<IUserDocment>({
     timestamps:true
 })
 
+userSchema.pre("save",async function(){
+    if(!this.isModified("password")) return;
+    this.password=await bcrypt.hash(this.password,process.env.SALT_ROUNDS as string);
+})
+userSchema.methods.comparePassword=async function(password:string):Promise<boolean>{
+    return await bcrypt.compare(password,this.password);
+}
 export const User = mongoose.model<IUserDocment>("User",userSchema);
