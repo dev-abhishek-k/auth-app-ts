@@ -45,7 +45,7 @@ const userSchema= new Schema<IUserDocment>({
 
 userSchema.pre("save",async function(){
     if(!this.isModified("password")) return;
-    this.password=await bcrypt.hash(this.password,process.env.SALT_ROUNDS as string);
+    this.password=await bcrypt.hash(this.password,Number(process.env.SALT_ROUNDS) || 10);
 })
 userSchema.methods.comparePassword=async function(password:string):Promise<boolean>{
     return await bcrypt.compare(password,this.password);
