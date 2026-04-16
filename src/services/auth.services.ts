@@ -1,4 +1,4 @@
-import { RegisterInput } from './../dto/auth.dto';
+import { RegisterInput, LoginInput } from './../dto/auth.dto';
 import crypto from 'crypto'
 import { User } from '../models/auth.models'
 import { ApiError } from '../utils/api-error'
@@ -35,6 +35,25 @@ const {password:_,verificationdToken,...safeUser}=userObj
   return safeUser
 }
 
+const loginUser=async({email,password}:LoginInput)=>{
+    const user=await User.findOne({email}).select("+password");
+    if(!user){
+        throw ApiError.notFound("User not found");
+    }
+    const isPasswordValid=await user.comparePassword(password);
+    if(!isPasswordValid){
+        throw ApiError.unauthorized("Invalid password");
+    }
+    const AccessToken=generateAccessToken({id:user._id.toString(),role:user.role });
+    const RefreshToken=generateRefreshToken({id:user._id.toString()});
+    // store hashed refresh token in db so it can be invalidated on Logout
+    user.refreshToken=hashToken(RefreshToken);
+    await user.save({validateBeforeSave:false});
+    const userObj=user.toObject();
+    const {password:_,verificationdToken,...safeUser}=userObj
+    return {user:AccessToken,RefreshToken,safeUser}
+}
 export {
-    registerUser
+    registerUser,
+    loginUser
 }
