@@ -1,7 +1,9 @@
 import mongoose,{Schema,Document} from "mongoose";
 import type { IUser } from "../types/user.type.ts";
 import bcrypt from "bcrypt";
-export interface IUserDocment extends IUser,Document{}
+export interface IUserDocment extends IUser,Document{
+    comparePassword(password:string):Promise<boolean>;
+}
 
 const userSchema= new Schema<IUserDocment>({
     name:{
