@@ -11,6 +11,11 @@ const register=async(req:Request,res:Response)=>{
     user);
 }
 
+const login=async(req:Request,res:Response)=>{
+    const user=await authServices.loginUser(req.body);
+    ApiResponse.ok(res,"Login successful",user);
+}
 export {
-    register
+    register,
+    login
 }   
