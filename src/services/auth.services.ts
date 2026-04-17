@@ -53,7 +53,25 @@ const loginUser=async({email,password}:LoginInput)=>{
     const {password:_,verificationdToken,...safeUser}=userObj
     return {user:AccessToken,RefreshToken,safeUser}
 }
+
+const refresh=async(token:string)=>{
+if(!token){
+    throw ApiError.unauthorized("Refresh token missing");
+}
+const decoded=verifyAccessToken(token)
+const user = await User.findById(decoded.id).select("+refreshToken");
+if(!user){
+    throw ApiError.notFound("User no longer exists");
+}
+if(user.refreshToken!==hashToken(token)){
+    throw ApiError.unauthorized("invalid refresh token-please login again");
+}
+const AccessToken=generateAccessToken({id:user._id.toString(),role:user.role });
+
+return {AccessToken}
+}
 export {
     registerUser,
-    loginUser
+    loginUser,
+    refresh
 }
