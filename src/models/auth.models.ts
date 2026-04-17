@@ -37,10 +37,22 @@ const userSchema= new Schema<IUserDocment>({
         type:Boolean,
         default:false
     },
-    verificationdToken:String,
-    refreshToken:String,
-    resetPasswordToken:String,
-    resetPasswordExpire:Date
+    verificationdToken:{
+        type:String,
+        select:false
+    },
+    refreshToken:{
+        type:String,
+
+    },
+    resetPasswordToken:{
+        type:String,
+        select:false
+},
+    resetPasswordExpire:{
+        type:Date,
+        select:false    
+},
 },
 {
     timestamps:true
