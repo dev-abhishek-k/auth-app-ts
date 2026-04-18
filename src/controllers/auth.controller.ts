@@ -12,10 +12,22 @@ const register=async(req:Request,res:Response)=>{
 }
 
 const login=async(req:Request,res:Response)=>{
-    const user=await authServices.loginUser(req.body);
-    ApiResponse.ok(res,"Login successful",user);
+    const {user,AccessToken,RefreshToken}=await authServices.loginUser(req.body);
+    res.cookie("refreshToken",RefreshToken,{
+        httpOnly:true,
+        secure:process.env.NODE_ENV==="production",
+        sameSite:"strict",
+        maxAge:7*24*60*60*1000
+    });
+    ApiResponse.ok(res,"Login successful",{user,AccessToken});
+}
+const refreshToken=async(req:Request,res:Response)=>{
+    const token=req.cookies?.refreshToken;
+    const {AccessToken}=await authServices.refresh(token);
+    ApiResponse.ok(res,"Token refreshed",AccessToken);
 }
 export {
     register,
-    login
+    login,
+    refreshToken    
 }   
