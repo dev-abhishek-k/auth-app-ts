@@ -4,7 +4,7 @@ import { User } from '../models/auth.models'
 import { ApiError } from '../utils/api-error'
 import { ApiResponse } from '../utils/api-response'
 import { SendVerificationEmail } from '../config/email';
-import { generateAccessToken,generateResetToken, generateRefreshToken, verifyAccessToken } from '../utils/jwt'
+import { generateAccessToken,generateResetToken, generateRefreshToken, verifyRefreshToken } from '../utils/jwt'
 const hashToken= (token:string)=>{
     const hash= crypto.createHash("sha256").update(token).digest("hex");
     return hash;
@@ -51,14 +51,14 @@ const loginUser=async({email,password}:LoginInput)=>{
     await user.save({validateBeforeSave:false});
     const userObj=user.toObject();
     const {password:_,verificationdToken,...safeUser}=userObj
-    return {user:AccessToken,RefreshToken,safeUser}
+    return {AccessToken,RefreshToken,user:safeUser}
 }
 
 const refresh=async(token:string)=>{
 if(!token){
     throw ApiError.unauthorized("Refresh token missing");
 }
-const decoded=verifyAccessToken(token)
+const decoded=verifyRefreshToken(token)
 const user = await User.findById(decoded.id).select("+refreshToken");
 if(!user){
     throw ApiError.notFound("User no longer exists");
@@ -75,3 +75,5 @@ export {
     loginUser,
     refresh
 }
+
+
