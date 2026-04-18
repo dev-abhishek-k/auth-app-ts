@@ -9,6 +9,7 @@ const router: Router = express.Router();
 
 router.post("/register",validate(registerSchema), authController.register);
 router.post("/login",validate(loginSchema), authController.login);
+router.post("/refresh-token", authController.refreshToken);
 
 
 export default router;
