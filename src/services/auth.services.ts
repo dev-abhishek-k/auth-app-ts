@@ -70,10 +70,18 @@ const AccessToken=generateAccessToken({id:user._id.toString(),role:user.role });
 
 return {AccessToken}
 }
+const logout=async(userId:string)=>{        
+    const user=await User.findByIdAndUpdate(userId, { refreshToken: null });
+    if(!user){
+        throw ApiError.notFound("User no longer exists");
+    }
+    
+}                  
 export {
     registerUser,
     loginUser,
-    refresh
+    refresh,
+    logout
 }
 
 
