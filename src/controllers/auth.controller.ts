@@ -31,8 +31,24 @@ const logout=async(req:Request,res:Response)=>{
     res.clearCookie("refreshToken");        
     ApiResponse.ok(res,"Logout successful");
 }
+const verifyEmail=async(req:Request,res:Response)=>{    
+    const user=await authServices.verifyEmail(req.query.token as string);
+    ApiResponse.ok(res,"Email verified successfully",user);
+}
+const forgotPassword=async(req:Request,res:Response)=>{     
+    await authServices.forgotPassword(req.body.email);
+    ApiResponse.ok(res,"Password reset email sent");    
+}
+const resetPassword=async(req:Request,res:Response)=>{
+    await authServices.resetPassword(req.body.token,req.body.newPassword);
+    ApiResponse.ok(res,"Password reset successful");
+}
 export {
     register,
     login,
-    refreshToken    
-}   
+    refreshToken,
+    logout,
+    verifyEmail,
+    forgotPassword,
+    resetPassword
+}    
