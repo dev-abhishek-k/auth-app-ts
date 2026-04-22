@@ -6,6 +6,6 @@ role:'user'|'admin';
 isVerfied: boolean;
 verificationdToken: string;
 refreshToken: string;
-resetPasswordToken: string;
-resetPasswordExpire: Date
+resetPasswordToken?: string | undefined;
+resetPasswordExpire?: Date | undefined;
 }
