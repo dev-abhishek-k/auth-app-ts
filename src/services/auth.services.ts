@@ -3,7 +3,7 @@ import crypto from "crypto";
 import { User } from "../models/auth.models";
 import { ApiError } from "../utils/api-error";
 import { ApiResponse } from "../utils/api-response";
-import { SendVerificationEmail } from "../config/email";
+import { SendPasswordResetEmail, SendVerificationEmail } from "../config/email";
 import {
   generateAccessToken,
   generateResetToken,
@@ -113,4 +113,19 @@ const verifyEmail = async (token: string) => {
   });
   return user;
 };
-export { registerUser, loginUser, refresh, logout, verifyEmail };
+const forgotPassword = async (email: string) => {
+    const user = await User.findOne({ email });
+    if (!user) {
+        throw ApiError.notFound("No account associated with this email");
+    }
+    const { rawToken, hashedToken } = generateResetToken();
+    user.resetPasswordToken = hashedToken;
+    user.resetPasswordExpire = new Date(Date.now() + 15 * 60 * 1000); 
+    await user.save({ validateBeforeSave: false });
+     try {
+        await SendPasswordResetEmail(email,rawToken);
+     } catch (error) {
+        
+     }
+};
+export { registerUser, loginUser, refresh, logout, verifyEmail, forgotPassword };
