@@ -26,6 +26,10 @@ const SendVerificationEmail=async(email:string,token:string)=>{
     await SendEmail(email,"Email Verification",
         `Please click on the link to verify your email ${url}`)
 }
+const SendPasswordResetEmail=async(email:string,token:string)=>{
+    const url=`${process.env.CLIENT_URL}/reset-password/${token}`
+    await SendEmail(email,"Password Reset",
+        `Please click on the link to reset your password ${url}`)
+}
 
-
-export {SendVerificationEmail}
+export {SendVerificationEmail,SendPasswordResetEmail}
