@@ -10,6 +10,7 @@ import {
   generateRefreshToken,
   verifyRefreshToken,
 } from "../utils/jwt";
+import type { IUser } from "../types/user.type";
 const hashToken = (token: string) => {
   const hash = crypto.createHash("sha256").update(token).digest("hex");
   return hash;
@@ -128,4 +129,22 @@ const forgotPassword = async (email: string) => {
         
      }
 };
-export { registerUser, loginUser, refresh, logout, verifyEmail, forgotPassword };
+const resetPassword = async (token: string, newPassword: string) => {
+    const trimed = token.trim();
+    if (!trimed) {  
+        throw ApiError.badRequest("Reset token is missing or invalid");
+    }   
+    const hasedInput = hashToken(trimed);
+    const user = await User.findOne({
+        resetPasswordToken: hasedInput,
+        resetPasswordExpire: { $gt: Date.now() },
+    });
+    if (!user) {
+        throw ApiError.badRequest("Invalid or expired reset token");
+    }
+    user.password = newPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save({ validateBeforeSave: false });
+};
+export { registerUser, loginUser, refresh, logout, verifyEmail, forgotPassword, resetPassword };
