@@ -26,6 +26,11 @@ const refreshToken=async(req:Request,res:Response)=>{
     const {AccessToken}=await authServices.refresh(token);
     ApiResponse.ok(res,"Token refreshed",AccessToken);
 }
+const logout=async(req:Request,res:Response)=>{
+    await authServices.logout(req.user.id);           
+    res.clearCookie("refreshToken");        
+    ApiResponse.ok(res,"Logout successful");
+}
 export {
     register,
     login,
